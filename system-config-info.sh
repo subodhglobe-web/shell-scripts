@@ -4,8 +4,6 @@
 #
 # ssh username@remote_ip 'bash -s' < local_script.sh
 
-
-
 echo ""
 
 printf "\t\tMEMORY DETAILS\n\n"
@@ -13,10 +11,10 @@ printf "\t\tMEMORY DETAILS\n\n"
 free -h | awk ' NR==1 {print "METRIC", "TOTAL", "USED", "FREE", "AVAILABLE"}
 NR==2 {print "Mem:", $2, $3,$4,$7} NR==3 {print "Swap:", $2,$3,$4,"N/A"}' | column -t
 
-
 echo ""
 sudo yum -y -q install sysstat -y
 echo""
+
 printf "\t\tPROCESSOR / CORES USES\n\n"
 
 
