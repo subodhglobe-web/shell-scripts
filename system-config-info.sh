@@ -5,6 +5,7 @@
 # ssh username@remote_ip 'bash -s' < local_script.sh
 
 echo ""
+### Modified the output of free command with the help of awk and run a loop to get resired output. 
 
 printf "\t\tMEMORY DETAILS\n\n"
 
@@ -12,11 +13,14 @@ free -h | awk ' NR==1 {print "METRIC", "TOTAL", "USED", "FREE", "AVAILABLE"}
 NR==2 {print "Mem:", $2, $3,$4,$7} NR==3 {print "Swap:", $2,$3,$4,"N/A"}' | column -t
 
 echo ""
+### Installing the system managing and monitoring tool for both rpm and debian based OS.  
+
 sudo yum -y -q install sysstat -y
 echo""
 
-printf "\t\tPROCESSOR / CORES USES\n\n"
-
+### Modified the mpstat output accordingly to get the total number of cores information and utilization of each cores.
+##### NR is the number of lines which used with loops to get the each cores utilization. 
+printf "\t\tPROCESSOR / CORES Utilizations\n\n"
 
 lscpu | grep "Thread(s) per core:"
 lscpu | grep "Core(s) per socket:"
@@ -38,9 +42,8 @@ NR>=6 && NR<(6+cores) {
     print $1, $4, $9, $14 , $7 
 }' | column -t
 
-
 echo ""
-
+### Provide you detailed informations of all Network such as names, types and IP addresses.
 printf "\t\tNETWORK CONNECTIONS DETAILS\n\n"
 
 echo ""
@@ -64,6 +67,7 @@ echo "$raw_data" | awk -v RS="" '
 }'
 
 echo ""
+### Used lsblk command here and changed headers which enhance better understanding.
 printf "\t\tHARD DISK DETAILS\n\n"
 
 echo ""
