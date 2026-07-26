@@ -1,4 +1,4 @@
-#1/bin/bash
+#!/bin/bash
 
 ### Used array here for check the multi services. 
   
