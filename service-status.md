@@ -1,21 +1,22 @@
 #!/bin/bash
 
-#Write a script to check if a service is running, and start it if it’s not.
+# This script checks whether a service is running.
+# If the service is not running, it starts and enables the service.
 
+service="httpd"
 
-service=httpd
+# Option 1 
 
+if ! systemctl is-active --quiet "$service"; then
+    sudo systemctl enable --now "$service"
+    echo "Started and enabled: $service.service"
+else
+    echo "$service.service is already running."
+fi
 
+### Option-2
 
-#if ! systemctl is-active $service; then 
-#         sudo systemctl enable --now $service;
-#         echo "Started and Enabled: "$service".service" 
-#else
-          $service is Already stated"
-
-#fi
-
-if systemctl status "$service" | grep -q "Active:" == "inactive"; then  systemctl enable --now $service echo "Started & Enabled:-" $service 
-
-fi	
-
+iif systemctl status "$service" | grep -q "Active: inactive"; then
+    sudo systemctl enable --now "$service"
+    echo "Started and enabled: $service.service"
+fi
