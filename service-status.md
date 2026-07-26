@@ -16,7 +16,7 @@ fi
 
 #### Option-2
 
-iif systemctl status "$service" | grep -q "Active: inactive"; then
+if systemctl status "$service" | grep -q "Active: inactive"; then
     sudo systemctl enable --now "$service"
     echo "Started and enabled: $service.service"
 fi
