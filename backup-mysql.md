@@ -36,4 +36,3 @@ EOF
 user=admin
 password=your_password
 
-EOF
