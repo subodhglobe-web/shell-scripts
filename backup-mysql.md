@@ -1,38 +1,55 @@
+# MySQL Backup & Remote Transfer Script
+
+This Bash script takes backup of multiple MySQL databases, compresses it, and copies it to a remote server.
+
+## Bash script
+
+```bash id="mysqlbk"
 #!/bin/bash
 
-### Automate MySQL database backup and copy it to a remote server.
+# MySQL backup and send to remote server
 
-username="admin"
-backup_server="192.168.1.100"
+USERNAME="admin"
+BACKUP_SERVER="192.168.1.100"
 
-backup_file="backup.sql"
-archive_file="backup.sql.tgz"
+BACKUP_FILE="backup.sql"
+ARCHIVE_FILE="backup.sql.tgz"
 
-### Backup multiple databases
-mysqldump -u "$username" \
-  --databases customers_records products prices invoices \
-  > "$backup_file"
+# take backup
+mysqldump -u "$USERNAME" --databases customers_records products prices invoices > "$BACKUP_FILE"
 
-### Compress the backup
-tar -czf "$archive_file" "$backup_file"
+# compress backup
+tar -czf "$ARCHIVE_FILE" "$BACKUP_FILE"
 
-### Copy the archive to the remote backup server
-scp "$archive_file" root@"$backup_server":/tmp/
+# copy to remote server
+scp "$ARCHIVE_FILE" root@"$BACKUP_SERVER":/tmp/
 
-### (Optional) Restore the backup on the remote server
-ssh root@"$backup_server" <<EOF
+# (optional) restore on remote server
+ssh root@"$BACKUP_SERVER" <<EOF
 cd /tmp
-
-tar -xzf "$archive_file"
-
-mysql -u root < "$backup_file"
-
-rm -f "$backup_file" "$archive_file"
+tar -xzf "$ARCHIVE_FILE"
+mysql -u root < "$BACKUP_FILE"
+rm -f "$BACKUP_FILE" "$ARCHIVE_FILE"
 EOF
 
-## To make the script more secure, I stored the MySQL credentials in ~/.my.cnf instead of embedding the password in the script:
+echo "Backup completed and sent to $BACKUP_SERVER"
+```
 
+## Secure credentials
+
+Store MySQL credentials in `~/.my.cnf`:
+
+```bash id="cnfsec"
 [client]
 user=admin
 password=your_password
+```
 
+## How to run
+
+Save the script as `mysql-backup.sh`, then run:
+
+```bash id="runbk"
+chmod +x mysql-backup.sh
+./mysql-backup.sh
+```
