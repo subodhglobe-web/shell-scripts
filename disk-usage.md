@@ -6,7 +6,7 @@
 #### Provide all the details in the below variables.
 
 FROM_EMAIL="xxxxxxxxxx@gmail.com"
-TO_EMAIL="xxxxxxxx@gmail.com"
+TO_EMAIL="xxxxxxxx@gmail.com123"
 APP_PASS="xxxx xxxx xxxx xxxx"
 threshold=20
 
