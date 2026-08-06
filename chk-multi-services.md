@@ -1,10 +1,14 @@
+# Multi-Service Status Checker
+
+This Bash script checks multiple services and starts any service that is not running.
+
+## Bash script
+
+```bash
 #!/bin/bash
 
-### Used array here for check the multi services. 
-  
 services=("mysql" "httpd" "redis")
 
- ### Used loop to check each elements in the array & run the service if it is not running. 
 for service in "${services[@]}"; do
     echo "Checking: $service"
 
@@ -15,3 +19,21 @@ for service in "${services[@]}"; do
         echo "Service is already running: $service"
     fi
 done
+```
+
+## How to run
+
+Save the script as `check-services.sh`, then run:
+
+```bash
+chmod +x check-services.sh
+sudo ./check-services.sh
+```
+## How to run the script
+
+Save the Bash code as `check-services.sh`, then run:
+
+```bash
+chmod +x check-services.sh
+sudo ./check-services.sh
+```
