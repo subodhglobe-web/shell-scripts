@@ -1,78 +1,92 @@
+# System Health Monitoring Script
+
+This Bash script checks memory, CPU usage, network info, and disk details in a clean format.
+
+## Bash script
+
+```bash id="sysmon2"
 #!/bin/bash
 
-# Notes:- 
-#
-# ssh username@remote_ip 'bash -s' < local_script.sh
-
 echo ""
-### Modified the output of free command with the help of awk and run a loop to get resired output. 
 
+# MEMORY DETAILS
 printf "\t\tMEMORY DETAILS\n\n"
 
-free -h | awk ' NR==1 {print "METRIC", "TOTAL", "USED", "FREE", "AVAILABLE"}
-NR==2 {print "Mem:", $2, $3,$4,$7} NR==3 {print "Swap:", $2,$3,$4,"N/A"}' | column -t
+free -h | awk '
+NR==1 {print "METRIC", "TOTAL", "USED", "FREE", "AVAILABLE"}
+NR==2 {print "Mem:", $2, $3, $4, $7}
+NR==3 {print "Swap:", $2, $3, $4, "N/A"}
+' | column -t
 
 echo ""
-### Installing the system managing and monitoring tool for both rpm and debian based OS.  
 
-sudo yum -y -q install sysstat -y
-echo""
+# install sysstat (for mpstat)
+sudo yum -y -q install sysstat
 
-### Modified the mpstat output accordingly to get the total number of cores information and utilization of each cores.
-##### NR is the number of lines which used with loops to get the each cores utilization. 
-printf "\t\tPROCESSOR / CORES Utilizations\n\n"
+echo ""
+
+# CPU DETAILS
+printf "\t\tPROCESSOR / CORES UTILIZATION\n\n"
 
 lscpu | grep "Thread(s) per core:"
 lscpu | grep "Core(s) per socket:"
 
 echo ""
-echo ""
 
 mpstat -P ALL | awk '
-NR==1 { 
-    gsub(/[()]/, "", $3); gsub(/[()]/, "", $6); cores=$6; 
-    print "Kernel_Version", $2, "Cores:", cores, "System_Name:", $3, "Date:", $4, "\n" 
-} 
-NR==3 { 
-    print "Time", "CPU", "%usr", "%sys", "%dle", "\n" 
+NR==1 {
+gsub(/[()]/, "", $3); gsub(/[()]/, "", $6); cores=$6;
+print "Kernel:", $2, "Cores:", cores, "Host:", $3, "Date:", $4, "\n"
 }
-# Start at line 6 (first core) and loop dynamically until all cores are printed
-NR>=6 && NR<(6+cores) { 
-    # This automatically loops and prints for 4, 8, or any number of cores
-    print $1, $4, $9, $14 , $7 
+NR==3 {
+print "Time", "CPU", "%usr", "%sys", "%idle", "\n"
+}
+NR>=6 && NR<(6+cores) {
+print $1, $4, $9, $14, $7
 }' | column -t
 
 echo ""
-### Provide you detailed informations of all Network such as names, types and IP addresses.
-printf "\t\tNETWORK CONNECTIONS DETAILS\n\n"
 
-echo ""
-raw_data=$(nmcli dev show)
+# NETWORK DETAILS
+printf "\t\tNETWORK DETAILS\n\n"
 
-echo "$raw_data" | awk -v RS="" '
+nmcli dev show | awk -v RS="" '
 {
-    split($0, lines, "\n")
-
-    # Check only the second line array element for the required types
-    if (lines[2] ~ /GENERAL\.TYPE:[[:space:]]*(ethernet|wifi|eth|wif)/) {
-
-        # Extract and print only the requested GENERAL and IP4 fields
-        for (i=1; i<=length(lines); i++) {
-            if (lines[i] ~ /^(GENERAL\.(CONNECTION|DEVICE|TYPE)|IP4\.(ADDRESS\[1\]|GATEWAY|ROUTE\[1\]|ROUTE\[2\]|DNS\[1\])):/) {
-                print lines[i]
-            }
+split($0, lines, "\n")
+if (lines[2] ~ /GENERAL\.TYPE:[[:space:]]*(ethernet|wifi)/) {
+    for (i=1; i<=length(lines); i++) {
+        if (lines[i] ~ /^(GENERAL\.(CONNECTION|DEVICE|TYPE)|IP4\.(ADDRESS\[1\]|GATEWAY|DNS\[1\])):/) {
+            print lines[i]
         }
-        print "" # Keep a clean line gap between different device blocks
     }
+    print ""
+}
 }'
 
 echo ""
-### Used lsblk command here and changed headers which enhance better understanding.
-printf "\t\tHARD DISK DETAILS\n\n"
+
+# DISK DETAILS
+printf "\t\tDISK DETAILS\n\n"
+
+lsblk -o NAME,SIZE,FSUSED,FSAVAIL,FSUSE%,TYPE,MOUNTPOINTS \
+| sed '1s/FSUSED/USED/;1s/FSAVAIL/AVAILABLE/;1s/FSUSE%/USED%/'
 
 echo ""
+```
 
-lsblk -o NAME,SIZE,FSUSED,FSAVAIL,FSUSE%,TYPE,MOUNTPOINTS | sed '1s/FSUSED/USED/; 1s/FSAVAIL/AVAILABLE/; 1s/FSUSE%/USED%/'
-echo  ""
+## How to run
 
+Save the script as `system-monitor.sh`, then run:
 
+```bash id="runsys2"
+chmod +x system-monitor.sh
+./system-monitor.sh
+```
+
+## Run on remote server
+
+You can execute this script on a remote server using:
+
+```bash id="remotesys"
+ssh username@remote_ip 'bash -s' < system-monitor.sh
+```
