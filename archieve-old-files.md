@@ -1,45 +1,31 @@
-## Script file for Archiving it.
+# Log Backup & Cleanup Script
 
+This Bash script backs up `.log` files older than 7 days and removes them from the original location.
+
+## Bash script
+
+```bash
 #!/bin/bash
 
-# ==========================================
-# Script: Log Backup & Cleanup
-# Description:
-#   - Backup log files older than 7 days
-#   - Delete original files after backup
-# ==========================================
+# Backup .log files older than 7 days and delete originals
 
-log_dir="/var/log"
-archive_dir="/home/ishanga/all-logs"
+LOG_DIR="/var/log"
+ARCHIVE_DIR="/home/ishanga/all-logs"
 
-# Create archive directory if it doesn't exist
-mkdir -p "$archive_dir"
+# create backup dir if not exists
+mkdir -p "$ARCHIVE_DIR"
 
-echo "Starting log backup process..."
+# find, move and clean
+sudo find "$LOG_DIR" -type f -name "*.log" -mtime +7 -exec mv {} "$ARCHIVE_DIR" \;
 
-# -------------------------------
-# Method 1: Copy + Delete
-# -------------------------------
-echo "Method 1: Copy and remove old logs"
+echo "Old logs moved to $ARCHIVE_DIR"
+```
 
-sudo find "$log_dir" -type f -name "*.log" -mtime +7 -exec bash -c '
-  file="$1"
-  archive_dir="$2"
-  cp "$file" "$archive_dir" && rm -f "$file"
-' _ {} "$archive_dir" \;
+## How to run
 
-# -------------------------------
-# Method 2: Move files directly
-# -------------------------------
-echo "Method 2: Move old logs"
+Save the script as `log-backup.sh`, then run:
 
-sudo find "$log_dir" -type f -name "*.log" -mtime +7 -exec mv -t "$archive_dir" {} +
-
-# -------------------------------
-# Method 3: Only Copy (No Delete)
-# -------------------------------
-echo "Method 3: Copy only (no delete)"
-
-sudo find "$log_dir" -type f -name "*.log" -mtime +7 -exec cp {} "$archive_dir" \;
-
-echo "Log backup process completed."
+```bash
+chmod +x log-backup.sh
+sudo ./log-backup.sh
+```
