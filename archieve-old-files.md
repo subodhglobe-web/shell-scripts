@@ -1,3 +1,5 @@
+## Script file for Archiving it.
+
 #!/bin/bash
 
 # ==========================================
@@ -14,7 +16,7 @@ archive_dir="/home/ishanga/all-logs"
 mkdir -p "$archive_dir"
 
 echo "Starting log backup process..."
-cdjbfbseofnkjbdkbiakf
+
 # -------------------------------
 # Method 1: Copy + Delete
 # -------------------------------
