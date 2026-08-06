@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-#### Go to this link for creating the Google App Password
+### Go to this link for creating the Google App Password
 #### Link ="https://share.google/AxzOqNwrdmt2x2RbO"
 #### Provide all the details in the below variables.
 
