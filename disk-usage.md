@@ -119,7 +119,7 @@ export APP_PASS="xxxx xxxx xxxx xxxx"
 Then change the script configuration to:
 
 ```bash
-FROM_EMAIL="${FROM_EMAIL:?FROM_EMAIL is not set}"
-TO_EMAIL="${TO_EMAIL:?TO_EMAIL is not set}"
-APP_PASS="${APP_PASS:?APP_PASS is not set}"
+FROM_EMAIL="${XXXXXXXXX}"
+TO_EMAIL="${XXXXXXXXX}"
+APP_PASS="${XXXXXXXXXX}"
 ```
